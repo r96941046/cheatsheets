@@ -27,13 +27,13 @@ pg_dump dbname | bzip2 | ssh remoteuser@remotehost "bunzip2 | psql dbname"
 
 On master (the cat one shouldn't be at the bottom of the file)
 ```shell
-psql -c "CREATE USER rep REPLICATION LOGIN CONNECTION LIMIT 1 ENCRYPTED PASSWORD 'rep';"
+sudo -u postgres psql -c "CREATE USER rep REPLICATION LOGIN CONNECTION LIMIT 1 ENCRYPTED PASSWORD 'rep';"
 
 cat >> /etc/postgresql/9.4/main/pg_hba.conf <<EOF
 host   replication   rep   IP_address_of_slave/32   md5
 EOF
 
-cat >> /etc/postgresql/9.4/main/pg_hba.conf <<EOF
+cat >> /etc/postgresql/9.4/main/postgresql.conf <<EOF
 listen_addresses = 'localhost,IP_address_of_THIS_host'
 wal_level = 'hot_standby'
 archive_mode = on
