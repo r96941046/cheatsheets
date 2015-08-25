@@ -11,6 +11,16 @@ select version();
 select * from pg_database;
 ```
 
+### Connection
+```psql
+psql -U username -h hostname dbname
+```
+
+### Run SQL From File
+```psql
+psql -f "filename.psql"
+```
+
 ### Dump & Restore
 ```psql
 pg_dump dbname
@@ -23,7 +33,22 @@ pg_dump -h localhost -U localuser dbname | psql -h remotehost -U remoteuser dbna
 pg_dump dbname | bzip2 | ssh remoteuser@remotehost "bunzip2 | psql dbname"
 ```
 
-### Replication
+### Snippets
+
+#### Add time to datetime
+```psql
+with
+    rec as (
+        select d.id, d.recorded_at
+        from diary d
+    )
+update diary
+set recorded_at = rec.recorded_at + interval '1 year'
+from rec
+where diary.id = rec.id and user_id = 8073;
+```
+
+#### Replication
 
 On master (the cat one shouldn't be at the bottom of the file)
 ```shell
