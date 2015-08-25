@@ -33,6 +33,17 @@ pg_dump -h localhost -U localuser dbname | psql -h remotehost -U remoteuser dbna
 pg_dump dbname | bzip2 | ssh remoteuser@remotehost "bunzip2 | psql dbname"
 ```
 
+### Drop DB From Command Line
+check db connections first
+```psql
+select * from pg_stat_activity where datname = 'dbname';
+```
+
+as superuser or the database owner
+```shell
+dropdb 'dbname'
+```
+
 ### Snippets
 
 #### Add time to datetime
