@@ -46,6 +46,11 @@ dropdb 'dbname'
 
 ### Snippets
 
+#### Compare datetime
+```psql
+select * from diary where user_id = 661 and recorded_at < '2014-01-01' order by recorded_at desc;
+```
+
 #### Add time to datetime
 ```psql
 with
@@ -57,6 +62,11 @@ update diary
 set recorded_at = rec.recorded_at + interval '1 year'
 from rec
 where diary.id = rec.id and user_id = 8073;
+```
+
+#### Time casts
+```psql
+select * from diary where state = 'after_meal' and meal_type = 'snacks' and recorded_at::time <= '05:00:00' and recorded_at::time >= '00:00:00';
 ```
 
 #### Replication
