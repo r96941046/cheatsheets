@@ -21,6 +21,11 @@ psql -U username -h hostname dbname
 psql -f "filename.psql"
 ```
 
+### See table details
+```psql
+\d table_name
+```
+
 ### Dump & Restore
 ```psql
 pg_dump dbname
@@ -45,6 +50,12 @@ dropdb 'dbname'
 ```
 
 ### Snippets
+
+#### Indexes
+```psql
+create index pm_alert_created_at_patient_idx_category on pm_alert(created_at, patient_id, category);
+drop index pm_alert_created_at_patient_idx_category;
+```
 
 #### Compare datetime
 ```psql
