@@ -57,10 +57,29 @@ create index pm_alert_created_at_patient_idx_category on pm_alert(created_at, pa
 drop index pm_alert_created_at_patient_idx_category;
 ```
 
+#### Use alias to avoid ambiguous columns
+
+Both api_log and user_meter have column user_id
+```psql
+select distinct al.user_id, al.user_agent from api_log al join user_meter on al.user_id = user_meter.user_id where user_meter.last_date_time >= now() + interval '8.5 hours' order by al.user_id;
+```
+
+Both care_connect and user_meter have column user_id
+```psql
+select distinct clinic_id, cc.user_id, last_date_time from care_connect cc join user_meter on cc.user_id = user_meter.user_id where cc.role = 'user' and cc.status = 'active' and user_meter.last_date_time >= now() + interval '8.5 hours' and cc.clinic_id not in (1) order by clinic_id;
+```
+
+#### String search
+```psql
+select distinct user_id from api_log where user_agent like '%iOS%' order by user_id;
+select distinct user_id from api_log where user_agent like '%Android%' order by user_id;
+```
+
 #### Compare datetime
 ```psql
 select * from diary where user_id = 661 and recorded_at < '2014-01-01' order by recorded_at desc;
 select * from user_meter where last_date_time >= now() and last_date_time <= now() + interval '1 day';
+select * from user_meter where last_date_time >= now() + interval '8.5 hours';
 ```
 
 #### Add time to datetime
@@ -79,6 +98,11 @@ where diary.id = rec.id and user_id = 8073;
 #### Time casts
 ```psql
 select * from diary where state = 'after_meal' and meal_type = 'snacks' and recorded_at::time <= '05:00:00' and recorded_at::time >= '00:00:00';
+```
+
+#### Subquery
+```psql
+select distinct clinic_id from care_connect where role = 'user' and status = 'active' and user_id in (select user_id from user_meter where last_date_time >= now() + interval '8 hours');
 ```
 
 #### Replication
