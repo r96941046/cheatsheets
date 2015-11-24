@@ -60,6 +60,7 @@ drop index pm_alert_created_at_patient_idx_category;
 #### Compare datetime
 ```psql
 select * from diary where user_id = 661 and recorded_at < '2014-01-01' order by recorded_at desc;
+select * from user_meter where last_date_time >= now() and last_date_time <= now() + interval '1 day';
 ```
 
 #### Add time to datetime
