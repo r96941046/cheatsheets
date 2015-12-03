@@ -11,14 +11,19 @@ select version();
 select * from pg_database;
 ```
 
-### Connection
+### Check Connection
+```psql
+select * from pg_stat_activity;
+```
+
+### Connect
 ```psql
 psql -U username -h hostname dbname
 ```
 
 ### Run SQL From File
 ```psql
-psql -f "filename.psql"
+psql -f filename.psql
 ```
 
 ### See table details
