@@ -1,8 +1,8 @@
 ## Azure Cheat Sheet
 
-### Refs
-
 ### Azure CLI
+
+[MS Azure CLI Guide](https://azure.microsoft.com/zh-tw/documentation/articles/virtual-machines-command-line-tools/)
 
 First switch to the correct npm environment
 
