@@ -2,6 +2,43 @@
 
 ### Refs
 
+### Azure CLI
+
+First switch to the correct npm environment
+
+```
+azure help
+azure help config
+azure help account list
+```
+
+Set to azure resource manager mode
+```
+azure config mode arm
+```
+
+Login
+```
+azure login
+```
+
+```
+azure resource list
+azure account list
+```
+
+Set subscription to use
+```
+azure account set <subscription-id>
+```
+
+Connect to storage account
+```
+azure storage account connectingstring show <storage-name> -g <resource-group-name-for-the-storage>
+export AZURE_STORAGE_CONNECTION_STRING="<the-connection-string>"
+azure storage blob upload test.txt <container-name> example/test.txt
+```
+
 ### PowerShell Getting started
 
 - [How to install and configure Azure PowerShell](https://azure.microsoft.com/en-us/documentation/articles/powershell-install-configure/)
