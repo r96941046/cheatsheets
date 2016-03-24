@@ -6,6 +6,7 @@
 
 First switch to the correct npm environment
 
+Help
 ```
 azure help
 azure help config
@@ -22,6 +23,7 @@ Login
 azure login
 ```
 
+Info
 ```
 azure resource list
 azure account list
