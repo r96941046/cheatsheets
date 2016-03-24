@@ -2,7 +2,7 @@
 
 ### Azure CLI
 
-[MS Azure CLI Guide](https://azure.microsoft.com/zh-tw/documentation/articles/virtual-machines-command-line-tools/)
+- [MS Azure CLI Guide](https://azure.microsoft.com/zh-tw/documentation/articles/virtual-machines-command-line-tools/)
 
 First switch to the correct npm environment
 
@@ -39,6 +39,29 @@ Connect to storage account
 azure storage account connectingstring show <storage-name> -g <resource-group-name-for-the-storage>
 export AZURE_STORAGE_CONNECTION_STRING="<the-connection-string>"
 azure storage blob upload test.txt <container-name> example/test.txt
+```
+
+### HDInsight
+
+Shared file system commands
+
+List
+```
+hdfs dfs -ls /
+hdfs dfs -ls /example
+```
+
+Print
+```
+hdfs dfs -text /example/data/test.txt
+hdfs dfs -cat
+```
+
+File
+```
+hdfs dfs -rm
+hdfs dfs -cp
+hdfs dfs -mv
 ```
 
 ### PowerShell Getting started
