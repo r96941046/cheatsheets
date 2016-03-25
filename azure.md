@@ -100,6 +100,48 @@ hdfs dfs -ls /hive/warehouse
 Select
 ```
 SELECT * FROM staged_log;
+
+SELECT datetime, level, event_id
+FROM system_log
+LIMIT 10;
+
+SELECT unix_timestamp(datetime, 'dd/MM/yyyy hh:mm:ss') AS time_stamp, level, event_id
+FROM system_log;
+
+SELECT from_unixtime(unix_timestamp(datetime, 'dd/MM/yyyy hh:mm:ss')) AS datetime, level, event_id
+FROM system_log;
+```
+
+Select from views
+```
+SELECT datetime, level, event_id
+FROM v_system_log
+LIMIT 10;
+
+SELECT CAST(SUBSTR(datetime, 1, 10) AS DATE) AS event_date, level, event_id
+FROM v_system_log;
+
+SELECT CAST(SUBSTR(datetime, 1, 10) AS DATE) AS event_date, level, event_id
+FROM v_system_log
+ORDER BY event_date;
+
+SELECT CAST(SUBSTR(datetime, 1, 10) AS DATE) AS event_date, COUNT(*) AS events
+FROM v_system_log
+GROUP BY CAST(SUBSTR(datetime, 1, 10) AS date)
+ORDER BY event_date;
+
+SELECT CAST(SUBSTR(datetime, 1, 10) AS DATE) AS event_date, level, COUNT(*) AS events
+FROM v_system_log
+GROUP BY CAST(SUBSTR(datetime, 1, 10) AS date), level
+ORDER BY event_date, level;
+```
+
+Create views
+```
+CREATE VIEW v_system_log
+AS
+SELECT from_unixtime(unix_timestamp(datetime, 'dd/MM/yyyy hh:mm:ss')) AS datetime, level, event_id, source, details
+FROM system_log;
 ```
 
 Create external table
