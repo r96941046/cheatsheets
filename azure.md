@@ -39,6 +39,7 @@ Connect to storage account
 azure storage account connectingstring show <storage-name> -g <resource-group-name-for-the-storage>
 export AZURE_STORAGE_CONNECTION_STRING="<the-connection-string>"
 azure storage blob upload test.txt <container-name> example/test.txt
+azure storage blob download <container-name> <blob-name> <target-folder-name>
 ```
 
 ### HDInsight
@@ -62,6 +63,90 @@ File
 hdfs dfs -rm
 hdfs dfs -cp
 hdfs dfs -mv
+```
+
+Common task jars
+```
+ls /usr/hdp/current/hadoop-mapreduce-client
+hadoop jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-mapreduce-examples.jar
+hadoop jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-mapreduce-examples.jar wordcount
+hadoop jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-mapreduce-examples.jar wordcount <source-data-on-shared-file-system> <result-path-on-shared-file-system>
+```
+
+### HDInsight - Hive
+
+First ssh into HDInsight head node
+
+Enter Hive shell
+```
+hive
+```
+
+Leave Hive shell
+```
+EXIT;
+```
+
+Info
+```
+SHOW TABLES;
+```
+
+Default table location
+```
+hdfs dfs -ls /hive/warehouse
+```
+
+Select
+```
+SELECT * FROM staged_log;
+```
+
+Create external table
+```
+CREATE EXTERNAL TABLE staged_log
+(level STRING,
+ datetime STRING,
+ source STRING,
+ event_id INT,
+ category STRING,
+ details STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+STORED AS TEXTFILE LOCATION '/data/staged_log';
+```
+
+Create internal table
+```
+CREATE TABLE system_log
+(level STRING,
+ datetime STRING,
+ source STRING,
+ event_id STRING,
+ category STRING,
+ details STRING);
+```
+
+Create table as select
+```
+CREATE TABLE error_log
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+STORED AS TEXTFILE LOCATION '/data/error_log'
+AS
+SELECT datetime, source, event_id, details
+FROM system_log
+WHERE level = 'Error';
+```
+
+Load data into table
+```
+LOAD DATA INPATH '/data/logs.txt' INTO TABLE staged_log;
+```
+
+Insert data from select
+```
+INSERT INTO TABLE system_log
+SELECT * FROM staged_log
+WHERE event_id IS NOT NULL;
 ```
 
 ### PowerShell Getting started
