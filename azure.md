@@ -251,7 +251,7 @@ Login-AzureRmAccount
 
 - [7 Steps to Building Site-to-Site VPN Connections for V2 VNETs using Azure Resource Manager in the NEW Azure Portal](https://blogs.technet.microsoft.com/keithmayer/2015/12/22/7-steps-to-building-site-to-site-vpn-connections-for-v2-vnets-using-azure-resource-manager-in-the-new-azure-portal/)
 
-### Use PowerShell to dump site-to-site VPN logs to storage accoutn
+### Use PowerShell to dump site-to-site VPN logs to storage account
 
 - [Step-by-Step: Capturing Azure Resource Manager (ARM) VNET Gateway Diagnostic Logs](https://blogs.technet.microsoft.com/keithmayer/2015/12/07/step-by-step-capturing-azure-resource-manager-arm-vnet-gateway-diagnostic-logs/)
 - [Diagnose Azure Virtual Network VPN connectivity issues with PowerShell](https://blogs.technet.microsoft.com/keithmayer/2014/12/18/diagnose-azure-virtual-network-vpn-connectivity-issues-with-powershell/)
