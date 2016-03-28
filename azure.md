@@ -1,4 +1,4 @@
-## Azure Cheat Sheet
+## Azure Cheatsheet
 
 ### Azure CLI
 
@@ -191,6 +191,29 @@ SELECT * FROM staged_log
 WHERE event_id IS NOT NULL;
 ```
 
+Partition
+```
+CREATE TABLE part_log
+(event_date DATE,
+ source STRING,
+ event_id INT,
+ details STRING)
+PARTITIONED BY (level STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+STORED AS TEXTFILE LOCATION '/data/part_log';
+
+SET hive.exec.dynamic.partition = true;
+SET hive.exec.dynamic.partition.mode = nonstrict;
+
+INSERT INTO TABLE part_log PARTITION(level)
+SELECT CAST(SUBSTR(datetime, 1, 10) AS DATE), source, event_id, details, level
+FROM v_system_log;
+
+SELECT event_date, event_id
+FROM part_log
+WHERE level = 'Error';
+```
+
 ### PowerShell Getting started
 
 - [How to install and configure Azure PowerShell](https://azure.microsoft.com/en-us/documentation/articles/powershell-install-configure/)
@@ -232,3 +255,8 @@ Login-AzureRmAccount
 
 - [Step-by-Step: Capturing Azure Resource Manager (ARM) VNET Gateway Diagnostic Logs](https://blogs.technet.microsoft.com/keithmayer/2015/12/07/step-by-step-capturing-azure-resource-manager-arm-vnet-gateway-diagnostic-logs/)
 - [Diagnose Azure Virtual Network VPN connectivity issues with PowerShell](https://blogs.technet.microsoft.com/keithmayer/2014/12/18/diagnose-azure-virtual-network-vpn-connectivity-issues-with-powershell/)
+
+### VPN Routers
+
+- [Draytek Vigor IPsec VPN configuration](http://maxding.blogspot.tw/2014/07/draytek-vigor-2920n-ipsec-vpn.html)
+- [Draytek syslog access](https://www.draytek.com/index.php?option=com_k2&view=item&id=2062&Itemid=293&lang=en)
