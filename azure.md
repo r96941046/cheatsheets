@@ -44,28 +44,28 @@ azure storage blob download <container-name> <blob-name> <target-folder-name>
 
 ### HDInsight
 
-Shared file system commands
+- Shared file system commands
 
-List
+- List
 ```
 hdfs dfs -ls /
 hdfs dfs -ls /example
 ```
 
-Print
+- Print
 ```
 hdfs dfs -text /example/data/test.txt
 hdfs dfs -cat
 ```
 
-File
+- File
 ```
 hdfs dfs -rm
 hdfs dfs -cp
 hdfs dfs -mv
 ```
 
-Common task jars
+- Common task jars
 ```
 ls /usr/hdp/current/hadoop-mapreduce-client
 hadoop jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-mapreduce-examples.jar
@@ -75,29 +75,29 @@ hadoop jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-mapreduce-examples.ja
 
 ### HDInsight - Hive
 
-First ssh into HDInsight head node
+- First ssh into HDInsight head node
 
-Enter Hive shell
+- Enter Hive shell
 ```
 hive
 ```
 
-Leave Hive shell
+- Leave Hive shell
 ```
 EXIT;
 ```
 
-Info
+- Info
 ```
 SHOW TABLES;
 ```
 
-Default table location
+- Default table location
 ```
 hdfs dfs -ls /hive/warehouse
 ```
 
-Select
+- Select
 ```
 SELECT * FROM staged_log;
 
@@ -112,7 +112,7 @@ SELECT from_unixtime(unix_timestamp(datetime, 'dd/MM/yyyy hh:mm:ss')) AS datetim
 FROM system_log;
 ```
 
-Select from views
+- Select from views
 ```
 SELECT datetime, level, event_id
 FROM v_system_log
@@ -136,7 +136,7 @@ GROUP BY CAST(SUBSTR(datetime, 1, 10) AS date), level
 ORDER BY event_date, level;
 ```
 
-Create views
+- Create views
 ```
 CREATE VIEW v_system_log
 AS
@@ -144,7 +144,7 @@ SELECT from_unixtime(unix_timestamp(datetime, 'dd/MM/yyyy hh:mm:ss')) AS datetim
 FROM system_log;
 ```
 
-Create external table
+- Create external table
 ```
 CREATE EXTERNAL TABLE staged_log
 (level STRING,
@@ -157,7 +157,7 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
 STORED AS TEXTFILE LOCATION '/data/staged_log';
 ```
 
-Create internal table
+- Create internal table
 ```
 CREATE TABLE system_log
 (level STRING,
@@ -168,7 +168,7 @@ CREATE TABLE system_log
  details STRING);
 ```
 
-Create table as select
+- Create table as select
 ```
 CREATE TABLE error_log
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
@@ -179,19 +179,19 @@ FROM system_log
 WHERE level = 'Error';
 ```
 
-Load data into table
+- Load data into table
 ```
 LOAD DATA INPATH '/data/logs.txt' INTO TABLE staged_log;
 ```
 
-Insert data from select
+- Insert data from select
 ```
 INSERT INTO TABLE system_log
 SELECT * FROM staged_log
 WHERE event_id IS NOT NULL;
 ```
 
-Partition
+- Partition
 ```
 CREATE TABLE part_log
 (event_date DATE,
@@ -214,12 +214,12 @@ FROM part_log
 WHERE level = 'Error';
 ```
 
-Run hive script
+- Run hive script
 ```
 hive -i wasb:///data/create_table.hql
 ```
 
-UDF with python (stdin/stdout)
+- UDF with python (stdin/stdout)
 ```
 #!/usr/bin/env python
 
@@ -237,7 +237,7 @@ while True:
   print "\t".join([year, month, max_temp, min_temp, frost_days, str(rainfall_inches), sunshine])
 ```
 
-Use UDF in hive script
+- Use UDF in hive script
 ```
 add file wasb:///data/convert_rain.py;
 
@@ -249,22 +249,22 @@ FROM weather;
 
 ### HDInsight - Pig
 
-Enter grunt shell
+- Enter grunt shell
 ```
 pig
 ```
 
-Leave grunt shell
+- Leave grunt shell
 ```
 QUIT;
 ```
 
-Load
+- Load
 ```
 Source = LOAD '/data/heathrow.txt' USING PigStorage('\t') AS (year:chararray, month:chararray, maxtemp:float, mintemp:float, frost:int, rainfall:float, sunshine:float);
 ```
 
-Filter (remove null values from schema shaping)
+- Filter (remove null values from schema shaping)
 ```
 Data = FILTER Source BY maxtemp IS NOT NULL AND mintemp IS NOT NULL;
 Readings = FILTER Data BY year != 'yyyy';
@@ -272,49 +272,49 @@ CleanReadings = FILTER DataVals BY INDEXOF(sunshinehours, '#', 0) <= 0;
 DirtyReadings = FILTER DataVals BY INDEXOF(sunshinehours, '#', 0) > 0;
 ```
 
-Dump (to see results on-the-fly)
+- Dump (to see results on-the-fly)
 ```
 DUMP Data;
 DUMP SortedResults;
 ```
 
-Save
+- Save
 ```
 STORE SortedReadings INTO '/data/scrubbedweather' USING PigStorage(' ');
 ```
 
-Group
+- Group
 ```
 YearGroups = GROUP Readings BY year;
 ```
 
-Foreach
+- Foreach
 ```
 AggTemps = FOREACH YearGroups GENERATE group AS year, AVG(Readings.maxtemp) AS avghigh, AVG(Readings.mintemp) AS avglow;
 CleanedReadings = FOREACH DirtyReadings GENERATE year, month, maxtemp, mintemp, frostdays, rainfall, SUBSTRING(sunshinehours, 0, INDEXOF(sunshinehours, '#', 0)) AS sunshinehours;
 ```
 
-Sort
+- Sort
 ```
 SortedResults = ORDER AggTemps BY year;
 ```
 
-Replace
+- Replace
 ```
 DataVals = FOREACH Data GENERATE year, month, maxtemp, mintemp, frostdays, rainfall, REPLACE(sunshinehours, '---', '') AS sunshinehours;
 ```
 
-Union
+- Union
 ```
 Readings = UNION CleanReadings, CleanedReadings;
 ```
 
-Run pig scripts
+- Run pig scripts
 ```
 pig wasb:///data/scrub_weather.pig
 ```
 
-UDF with python
+- UDF with python
 ```
 @outputSchema("f_readings: {(year:chararray, month:int, maxtemp:float, mintemp:float, frostdays:int, rainfall:float, sunshinehours:chararray)}")
 def fahrenheit(c_reading):
@@ -324,7 +324,7 @@ def fahrenheit(c_reading):
   return year, int(month), maxtemp_f, mintemp_f, frostdays, float(rainfall), sunshine
 ```
 
-Use UDF in pig script
+- Use UDF in pig script
 ```
 REGISTER 'wasb:///data/convert_temp.py' using jython as convert_temp;
 
@@ -339,26 +339,26 @@ STORE ConvertedReadings INTO '/data/convertedweather';
 
 - [How to install and configure Azure PowerShell](https://azure.microsoft.com/en-us/documentation/articles/powershell-install-configure/)
 
-Open PowerShell ISE with admin
+- Open PowerShell ISE with admin
 ```
 Install-Module AzureRM
 Install-AzureRM
 Install-Module Azure
 ```
 
-Enable running scripts on the system
+- Enable running scripts on the system
 ```
 Set-ExecutionPolicy UnRestricted
 ```
 
-Import and update the module to install necessary functions
+- Import and update the module to install necessary functions
 ```
 Import-Module Azure
 Import-Module AzureRM
 Update-AzureRM
 ```
 
-Login resource manager
+- Login resource manager
 ```
 Import-AzureRM
 Login-AzureRmAccount
