@@ -4,37 +4,37 @@
 
 - [MS Azure CLI Guide](https://azure.microsoft.com/zh-tw/documentation/articles/virtual-machines-command-line-tools/)
 
-First switch to the correct npm environment
+- First switch to the correct npm environment
 
-Help
+- Help
 ```
 azure help
 azure help config
 azure help account list
 ```
 
-Set to azure resource manager mode
+- Set to azure resource manager mode
 ```
 azure config mode arm
 ```
 
-Login
+- Login
 ```
 azure login
 ```
 
-Info
+- Info
 ```
 azure resource list
 azure account list
 ```
 
-Set subscription to use
+- Set subscription to use
 ```
 azure account set <subscription-id>
 ```
 
-Connect to storage account
+- Connect to storage account
 ```
 azure storage account connectionstring show <storage-name> -g <resource-group-name-for-the-storage>
 export AZURE_STORAGE_CONNECTION_STRING="<the-connection-string>"
