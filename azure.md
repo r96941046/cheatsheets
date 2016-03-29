@@ -230,6 +230,8 @@ Filter (remove null values from schema shaping)
 ```
 Data = FILTER Source BY maxtemp IS NOT NULL AND mintemp IS NOT NULL;
 Readings = FILTER Data BY year != 'yyyy';
+CleanReadings = FILTER DataVals BY INDEXOF(sunshinehours, '#', 0) <= 0;
+DirtyReadings = FILTER DataVals BY INDEXOF(sunshinehours, '#', 0) > 0;
 ```
 
 Dump (to see results on-the-fly)
@@ -238,14 +240,20 @@ DUMP Data;
 DUMP SortedResults;
 ```
 
+Save
+```
+STORE SortedReadings INTO '/data/scrubbedweather' USING PigStorage(' ');
+```
+
 Group
 ```
 YearGroups = GROUP Readings BY year;
 ```
 
-Aggregation
+Foreach
 ```
 AggTemps = FOREACH YearGroups GENERATE group AS year, AVG(Readings.maxtemp) AS avghigh, AVG(Readings.mintemp) AS avglow;
+CleanedReadings = FOREACH DirtyReadings GENERATE year, month, maxtemp, mintemp, frostdays, rainfall, SUBSTRING(sunshinehours, 0, INDEXOF(sunshinehours, '#', 0)) AS sunshinehours;
 ```
 
 Sort
@@ -253,9 +261,24 @@ Sort
 SortedResults = ORDER AggTemps BY year;
 ```
 
+Replace
+```
+DataVals = FOREACH Data GENERATE year, month, maxtemp, mintemp, frostdays, rainfall, REPLACE(sunshinehours, '---', '') AS sunshinehours;
+```
+
+Union
+```
+Readings = UNION CleanReadings, CleanedReadings;
+```
+
 Leave grunt shell
 ```
 QUIT;
+```
+
+Run pig scripts
+```
+pig wasb:///data/scrub_weather.pig
 ```
 
 ### PowerShell Getting started
