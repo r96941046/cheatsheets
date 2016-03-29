@@ -36,7 +36,7 @@ azure account set <subscription-id>
 
 Connect to storage account
 ```
-azure storage account connectingstring show <storage-name> -g <resource-group-name-for-the-storage>
+azure storage account connectionstring show <storage-name> -g <resource-group-name-for-the-storage>
 export AZURE_STORAGE_CONNECTION_STRING="<the-connection-string>"
 azure storage blob upload test.txt <container-name> example/test.txt
 azure storage blob download <container-name> <blob-name> <target-folder-name>
@@ -212,6 +212,50 @@ FROM v_system_log;
 SELECT event_date, event_id
 FROM part_log
 WHERE level = 'Error';
+```
+
+### HDInsight - Pig
+
+Enter grunt shell
+```
+pig
+```
+
+Load
+```
+Source = LOAD '/data/heathrow.txt' USING PigStorage('\t') AS (year:chararray, month:chararray, maxtemp:float, mintemp:float, frost:int, rainfall:float, sunshine:float);
+```
+
+Filter (remove null values from schema shaping)
+```
+Data = FILTER Source BY maxtemp IS NOT NULL AND mintemp IS NOT NULL;
+Readings = FILTER Data BY year != 'yyyy';
+```
+
+Dump (to see results on-the-fly)
+```
+DUMP Data;
+DUMP SortedResults;
+```
+
+Group
+```
+YearGroups = GROUP Readings BY year;
+```
+
+Aggregation
+```
+AggTemps = FOREACH YearGroups GENERATE group AS year, AVG(Readings.maxtemp) AS avghigh, AVG(Readings.mintemp) AS avglow;
+```
+
+Sort
+```
+SortedResults = ORDER AggTemps BY year;
+```
+
+Leave grunt shell
+```
+QUIT;
 ```
 
 ### PowerShell Getting started
