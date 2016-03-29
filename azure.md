@@ -214,11 +214,49 @@ FROM part_log
 WHERE level = 'Error';
 ```
 
+Run hive script
+```
+hive -i wasb:///data/create_table.hql
+```
+
+UDF with python (stdin/stdout)
+```
+#!/usr/bin/env python
+
+import sys
+import string
+
+while True:
+  line = sys.stdin.readline()
+  if not line:
+    break
+
+  row = string.strip(line, "\n")
+  year, month, max_temp, min_temp, frost_days, rainfall_mm, sunshine = string.split(row, "\t")
+  rainfall_inches = float(rainfall_mm) / 25.4
+  print "\t".join([year, month, max_temp, min_temp, frost_days, str(rainfall_inches), sunshine])
+```
+
+Use UDF in hive script
+```
+add file wasb:///data/convert_rain.py;
+
+SELECT TRANSFORM (year, month, max_temp, min_temp, frost_days, rainfall, sunshine_hours)
+  USING 'python convert_rain.py' AS
+  (year INT, month INT, max_temp FLOAT, min_temp FLOAT, frost_days INT, rainfall FLOAT, sunshine_hours FLOAT)
+FROM weather;
+```
+
 ### HDInsight - Pig
 
 Enter grunt shell
 ```
 pig
+```
+
+Leave grunt shell
+```
+QUIT;
 ```
 
 Load
@@ -271,14 +309,30 @@ Union
 Readings = UNION CleanReadings, CleanedReadings;
 ```
 
-Leave grunt shell
-```
-QUIT;
-```
-
 Run pig scripts
 ```
 pig wasb:///data/scrub_weather.pig
+```
+
+UDF with python
+```
+@outputSchema("f_readings: {(year:chararray, month:int, maxtemp:float, mintemp:float, frostdays:int, rainfall:float, sunshinehours:chararray)}")
+def fahrenheit(c_reading):
+  year, month, maxtemp, mintemp, frostdays, rainfall, sunshine = c_reading.split(' ')
+  maxtemp_f = float(maxtemp) * 9/5 + 32
+  mintemp_f = float(mintemp) * 9/5 + 32
+  return year, int(month), maxtemp_f, mintemp_f, frostdays, float(rainfall), sunshine
+```
+
+Use UDF in pig script
+```
+REGISTER 'wasb:///data/convert_temp.py' using jython as convert_temp;
+
+Source = LOAD '/data/scrubbedweather' AS (celsius_readings:chararray);
+
+ConvertedReadings = FOREACH Source GENERATE FLATTEN(convert_temp.fahrenheit(celsius_readings));
+
+STORE ConvertedReadings INTO '/data/convertedweather';
 ```
 
 ### PowerShell Getting started
