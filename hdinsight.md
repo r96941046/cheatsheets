@@ -23,6 +23,16 @@ hdfs dfs -cp
 hdfs dfs -mv
 ```
 
+- Remove folder
+```
+hdfs dfs -rm -r /data/iislogs/scripts
+```
+
+- Copy file to local storage
+```
+hdfs dfs -get /data/iislogs/job.properties
+```
+
 - Common task jars
 ```
 ls /usr/hdp/current/hadoop-mapreduce-client
@@ -300,3 +310,60 @@ Ref: [Stackoverflow](https://stackoverflow.com/questions/10279942/what-is-the-di
 - Hive is used as **declarative SQL** for reporting in structured data 
 - Pig is used as **procedural language (script)** for programming in semi-structured data 
 - Both are slower than traditional MapReduce jobs, because they _all have to be converted to MapReduce jobs_
+
+### Oozie
+
+- Oozie job structure
+
+- Make sure following is configured in the config file (job.properties)
+```
+user.name=<ssh_user_name>
+nameNode=wasb://<container>@<storage_account>.blob.core.windows.net
+jobTracker=jobtrackerhost:9010
+oozie.wf.application.path=wasb:///data/iislogs/oozie
+oozie.wf.rerun.failnodes=true
+oozie.use.system.libpath=true
+queueName=default
+```
+
+- Upload to azure HDInsight (login to azure is required)
+```
+azure storage blob upload <local_file_name> <container_name> data/iislogs/<remote_file_name>
+```
+
+- Download config file to local storage
+```
+hdfs dfs -get /data/iislogs/job.properties
+```
+
+- Submit job and get job ID (not run yet)
+```
+oozie job -oozie http://localhost:11000/oozie -config job.properties -submit
+```
+
+- Run job
+```
+oozie job -oozie http://localhost:11000/oozie -config job.properties -run
+```
+
+- Job info
+```
+oozie job -oozie http://localhost:11000/oozie -info <job_ID>
+```
+
+- Start job
+```
+oozie job -oozie http://localhost:11000/oozie -start <job_ID>
+```
+
+- Rerun job
+Note: [Need to set failed nodes in config](http://mail-archives.apache.org/mod_mbox/incubator-oozie-users/201203.mbox/%3CCAJs-t7OTEf8usUZLu=1b26Bx7Av87mDGowRNkVJ4E12f5Czd6A@mail.gmail.com%3E)
+
+```
+oozie job -oozie http://localhost:11000/oozie -config job.properties -rerun <job_ID>
+```
+
+- Error log
+```
+oozie job -oozie http://localhost:11000/oozie -log <job_ID>
+```
