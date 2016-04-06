@@ -358,6 +358,7 @@ oozie job -oozie http://localhost:11000/oozie -start <job_ID>
 
 - Rerun job
 Note: [Need to set failed nodes in config](http://mail-archives.apache.org/mod_mbox/incubator-oozie-users/201203.mbox/%3CCAJs-t7OTEf8usUZLu=1b26Bx7Av87mDGowRNkVJ4E12f5Czd6A@mail.gmail.com%3E)
+Note: [Remove existing folders before rerunning pig jobs](http://stackoverflow.com/questions/11110403/how-to-force-store-overwrite-to-hdfs-in-pig)
 
 ```
 oozie job -oozie http://localhost:11000/oozie -config job.properties -rerun <job_ID>
