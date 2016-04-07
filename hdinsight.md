@@ -368,3 +368,13 @@ oozie job -oozie http://localhost:11000/oozie -config job.properties -rerun <job
 ```
 oozie job -oozie http://localhost:11000/oozie -log <job_ID>
 ```
+
+### sqoop
+
+- Export
+  + Note: escape special characters like @ with backslash
+  + Note: configure sql server firewall to allow connection from azure service
+  + Note: create the table first in sql database before export
+```
+sqoop export --connect "jdbc:sqlserver://<sql_server_name>.database.windows.net;username=<sql_server_user_name>@<sql_server_name>;password=<password>;database=<sql_db_name>" --table <table_name> --export-dir /data/iislogs/summarized --input-fields-terminated-by \\t
+```
