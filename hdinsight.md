@@ -313,7 +313,7 @@ Ref: [Stackoverflow](https://stackoverflow.com/questions/10279942/what-is-the-di
 
 ### Oozie
 
-- Oozie job structure
+- [Oozie Demo](https://github.com/r96941046/demo_oozie)
 
 - Make sure following is configured in the config file (job.properties)
 ```
