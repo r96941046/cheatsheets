@@ -372,7 +372,7 @@ oozie job -oozie http://localhost:11000/oozie -log <job_ID>
 ### sqoop
 
 - Export
-  + Note: escape special characters like @ with backslash
+  + Note: escape special characters like $ with backslash
   + Note: configure sql server firewall to allow connection from azure service
   + Note: create the table first in sql database before export
 ```
